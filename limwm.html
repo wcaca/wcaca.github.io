@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LIM-WM World Model Dashboard</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:#0d1117;color:#c9d1d9;padding:24px}
+h1{font-size:24px;margin-bottom:8px;color:#f0f6fc}
+h2{font-size:16px;color:#8b949e;margin:24px 0 12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
+.card{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:16px}
+.card h3{font-size:13px;color:#8b949e;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+.value{font-size:28px;font-weight:700;font-family:monospace}
+.accepted{color:#3fb950}.tension{color:#d29922}.rejected{color:#f85149}
+.aligned{color:#58a6ff}.orthogonal{color:#d29922}.opposed{color:#f85149}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th,td{padding:6px 8px;text-align:left;border-bottom:1px solid #21262d}
+th{color:#8b949e;font-weight:600}
+.mono{font-family:monospace;font-size:11px}
+.bar{height:8px;border-radius:4px;margin:4px 0;transition:width .3s}
+.bar-dim1{background:#3fb950}.bar-dim2{background:#58a6ff}
+.bar-dim4{background:#d29922}.bar-dim8{background:#f0883e}
+.bar-dim16{background:#f85149}
+.bar-phase{background:linear-gradient(90deg,#3fb950,#58a6ff,#d29922,#f85149)}
+.phase-pill{display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600}
+.pill-d{background:#3fb95033;color:#3fb950}
+.pill-c{background:#58a6ff33;color:#58a6ff}
+.pill-s{background:#d2992233;color:#d29922}
+.pill-w{background:#f8514933;color:#f85149}
+svg{width:100%;height:auto}
+.axis{stroke:#30363d;stroke-width:1}
+.label{font-size:10px;fill:#8b949e;font-family:monospace}
+.conn-line{stroke:#30363d;stroke-width:1}
+.conn-aligned{stroke:#58a6ff}.conn-orthogonal{stroke:#d29922}.conn-opposed{stroke:#f85149}
+.node{fill:#58a6ff}.node-dim16{fill:#f85149}.node-dim8{fill:#f0883e}.node-dim4{fill:#d29922}.node-dim2{fill:#58a6ff}
+footer{margin-top:32px;padding-top:16px;border-top:1px solid#30363d;font-size:11px;color:#484f58}
+</style>
+</head>
+<body>
+<h1>LIM 世界模型 · 模拟仪表盘</h1>
+<p style="color:#8b949e;font-size:13px">λ-信息元结构同构度 · Cayley-Dickson 涌现 · 9 步</p>
+
+<h2>涌现阶段推进</h2>
+<div class="card">
+
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px"><span class="phase-pill pill-d" style="margin:2px" title="第0步: 初始状态">离散化</span><span class="phase-pill pill-d" style="margin:2px" title="第1步: 酒馆存在">离散化</span><span class="phase-pill pill-d" style="margin:2px" title="第2步: Alice 到来">离散化</span><span class="phase-pill pill-c" style="margin:2px" title="第3步: Alice 进入酒馆">连接</span><span class="phase-pill pill-s" style="margin:2px" title="第4步: 暴风雨加剧">结构</span><span class="phase-pill pill-w" style="margin:2px" title="第5步: Alice 感到紧张">世界</span><span class="phase-pill pill-w" style="margin:2px" title="第6步: 规则进化">世界</span><span class="phase-pill pill-w" style="margin:2px" title="第7步: 推理演绎">世界</span><span class="phase-pill pill-w" style="margin:2px" title="第8步: 多智能体共识">世界</span></div>
+    <div style="font-size:12px;color:#8b949e">
+      最大代数维度: <span class="value" style="font-size:18px">16D</span>
+      &nbsp;·&nbsp; 实体: <span style="color:#f0f6fc">5</span>
+      &nbsp;·&nbsp; 连接: <span style="color:#f0f6fc">10</span>
+      &nbsp;·&nbsp; 结构: <span style="color:#f0f6fc">0</span>
+    </div>
+</div>
+
+<h2>实体与连接图</h2>
+<div class="grid">
+<div class="card">
+<h3>涌现状态表</h3>
+<table>
+    <tr><th>#</th><th>事件</th><th>阶段</th><th>实体</th><th>连接</th><th>对齐/正交/对立</th><th>结构</th></tr>
+    <tr>
+      <td class="mono">0</td>
+      <td>初始状态</td>
+      <td><span class="pill-d">离散化</span></td>
+      <td class="mono">0</td>
+      <td class="mono">0</td>
+      <td class="mono"><span class="aligned">0</span> <span class="orthogonal">0</span> <span class="opposed">0</span></td>
+      <td class="mono">0</td>
+    </tr><tr>
+      <td class="mono">1</td>
+      <td>酒馆存在</td>
+      <td><span class="pill-d">离散化</span></td>
+      <td class="mono">1</td>
+      <td class="mono">0</td>
+      <td class="mono"><span class="aligned">0</span> <span class="orthogonal">0</span> <span class="opposed">0</span></td>
+      <td class="mono">0</td>
+    </tr><tr>
+      <td class="mono">2</td>
+      <td>Alice 到来</td>
+      <td><span class="pill-d">离散化</span></td>
+      <td class="mono">2</td>
+      <td class="mono">1</td>
+      <td class="mono"><span class="aligned">0</span> <span class="orthogonal">0</span> <span class="opposed">1</span></td>
+      <td class="mono">0</td>
+    </tr><tr>
+      <td class="mono">3</td>
+      <td>Alice 进入酒馆</td>
+      <td><span class="pill-c">连接</span></td>
+      <td class="mono">3</td>
+      <td class="mono">3</td>
+      <td class="mono"><span class="aligned">0</span> <span class="orthogonal">0</span> <span class="opposed">3</span></td>
+      <td class="mono">0</td>
+    </tr><tr>
+      <td class="mono">4</td>
+      <td>暴风雨加剧</td>
+      <td><span class="pill-s">结构</span></td>
+      <td class="mono">4</td>
+      <td class="mono">6</td>
+      <td class="mono"><span class="aligned">0</span> <span class="orthogonal">0</span> <span class="opposed">6</span></td>
+      <td class="mono">0</td>
+    </tr><tr>
+      <td class="mono">5</td>
+      <td>Alice 感到紧张</td>
+      <td><span class="pill-w">世界</span></td>
+      <td class="mono">5</td>
+      <td class="mono">10</td>
+      <td class="mono"><span class="aligned">0</span> <span class="orthogonal">1</span> <span class="opposed">9</span></td>
+      <td class="mono">0</td>
+    </tr><tr>
+      <td class="mono">6</td>
+      <td>规则进化</td>
+      <td><span class="pill-w">世界</span></td>
+      <td class="mono">5</td>
+      <td class="mono">10</td>
+      <td class="mono"><span class="aligned">0</span> <span class="orthogonal">1</span> <span class="opposed">9</span></td>
+      <td class="mono">0</td>
+    </tr><tr>
+      <td class="mono">7</td>
+      <td>推理演绎</td>
+      <td><span class="pill-w">世界</span></td>
+      <td class="mono">5</td>
+      <td class="mono">10</td>
+      <td class="mono"><span class="aligned">0</span> <span class="orthogonal">1</span> <span class="opposed">9</span></td>
+      <td class="mono">0</td>
+    </tr><tr>
+      <td class="mono">8</td>
+      <td>多智能体共识</td>
+      <td><span class="pill-w">世界</span></td>
+      <td class="mono">5</td>
+      <td class="mono">10</td>
+      <td class="mono"><span class="aligned">0</span> <span class="orthogonal">1</span> <span class="opposed">9</span></td>
+      <td class="mono">0</td>
+    </tr>
+  </table>
+</div>
+<div class="card">
+<h3>实体关系图（最终步）</h3>
+<svg viewBox="0 0 400 300">
+    <line x1="304.6162167924669" y1="116.00813061875579" x2="200" y2="40" class="conn-opposed" opacity="0.5"/><line x1="264.65637775217203" y1="238.99186938124421" x2="200" y2="40" class="conn-opposed" opacity="0.5"/><line x1="264.65637775217203" y1="238.99186938124421" x2="304.6162167924669" y2="116.00813061875579" class="conn-opposed" opacity="0.5"/><line x1="135.34362224782797" y1="238.99186938124421" x2="200" y2="40" class="conn-opposed" opacity="0.5"/><line x1="135.34362224782797" y1="238.99186938124421" x2="304.6162167924669" y2="116.00813061875579" class="conn-opposed" opacity="0.5"/><line x1="135.34362224782797" y1="238.99186938124421" x2="264.65637775217203" y2="238.99186938124421" class="conn-opposed" opacity="0.5"/><line x1="95.3837832075331" y1="116.0081306187558" x2="200" y2="40" class="conn-opposed" opacity="0.5"/><line x1="95.3837832075331" y1="116.0081306187558" x2="304.6162167924669" y2="116.00813061875579" class="conn-opposed" opacity="0.5"/><line x1="95.3837832075331" y1="116.0081306187558" x2="264.65637775217203" y2="238.99186938124421" class="conn-opposed" opacity="0.5"/><line x1="95.3837832075331" y1="116.0081306187558" x2="135.34362224782797" y2="238.99186938124421" class="conn-orthogonal" opacity="0.5"/><circle cx="200" cy="40" r="5" class="node-dim2"/><text x="200" y="32" class="label" text-anchor="middle">evt-tavern</text><circle cx="304.6162167924669" cy="116.00813061875579" r="5" class="node-dim2"/><text x="304.6162167924669" y="108.00813061875579" class="label" text-anchor="middle">evt-alice</text><circle cx="264.65637775217203" cy="238.99186938124421" r="5" class="node-dim4"/><text x="264.65637775217203" y="230.99186938124421" class="label" text-anchor="middle">evt-enter</text><circle cx="135.34362224782797" cy="238.99186938124421" r="5" class="node-dim8"/><text x="135.34362224782797" y="230.99186938124421" class="label" text-anchor="middle">evt-storm</text><circle cx="95.3837832075331" cy="116.0081306187558" r="5" class="node-dim16"/><text x="95.3837832075331" y="108.0081306187558" class="label" text-anchor="middle">evt-tensio</text>
+    <text x="10" y="290" class="label">●dim2 ●dim4 ●dim8 ●dim16 &nbsp; — aligned — orthogonal — opposed</text>
+  </svg>
+</div>
+</div>
+
+<h2>μ(I,R) — 一致性随时间变化</h2>
+<div class="card">
+<div style="margin:4px 0">
+      <div style="display:flex;justify-content:space-between;font-size:11px"><span>酒馆存在</span><span class="mono tension">μ=0.41</span></div>
+      <div style="background:#21262d;border-radius:4px;height:4px"><div style="width:41%;height:4px;background:#d29922;border-radius:4px"></div></div>
+    </div><div style="margin:4px 0">
+      <div style="display:flex;justify-content:space-between;font-size:11px"><span>Alice 到来</span><span class="mono rejected">μ=0.30</span></div>
+      <div style="background:#21262d;border-radius:4px;height:4px"><div style="width:30%;height:4px;background:#f85149;border-radius:4px"></div></div>
+    </div><div style="margin:4px 0">
+      <div style="display:flex;justify-content:space-between;font-size:11px"><span>Alice 进入酒馆</span><span class="mono rejected">μ=0.24</span></div>
+      <div style="background:#21262d;border-radius:4px;height:4px"><div style="width:24%;height:4px;background:#f85149;border-radius:4px"></div></div>
+    </div><div style="margin:4px 0">
+      <div style="display:flex;justify-content:space-between;font-size:11px"><span>暴风雨加剧</span><span class="mono tension">μ=0.43</span></div>
+      <div style="background:#21262d;border-radius:4px;height:4px"><div style="width:43%;height:4px;background:#d29922;border-radius:4px"></div></div>
+    </div><div style="margin:4px 0">
+      <div style="display:flex;justify-content:space-between;font-size:11px"><span>Alice 感到紧张</span><span class="mono tension">μ=0.40</span></div>
+      <div style="background:#21262d;border-radius:4px;height:4px"><div style="width:40%;height:4px;background:#d29922;border-radius:4px"></div></div>
+    </div>
+</div>
+
+<h2>预测详情</h2>
+<div class="card">
+<table>
+    <tr><th>事件</th><th>预测判定 (分数)</th><th>实际判定 (分数)</th><th>结果</th><th>误差</th><th>累计精度</th><th>趋势</th></tr>
+    <tr>
+      <td>Alice 进入酒馆</td>
+      <td class="mono rejected">拒绝 <span style="font-size:10px">0.00</span></td>
+      <td class="mono rejected">拒绝 <span style="font-size:10px">0.24</span></td>
+      <td class="mono"><span class="accepted">✓ 命中</span></td>
+      <td class="mono">23.8%</td>
+      <td class="mono">76.3%</td>
+      <td>
+        <div style="background:#21262d;border-radius:3px;height:6px;width:80px">
+          <div style="width:76%;height:6px;background:#3fb950;border-radius:3px"></div>
+        </div>
+      </td>
+    </tr><tr>
+      <td>Alice 感到紧张</td>
+      <td class="mono rejected">拒绝 <span style="font-size:10px">0.26</span></td>
+      <td class="mono tension">张力 <span style="font-size:10px">0.40</span></td>
+      <td class="mono"><span class="rejected">✗ 偏差</span></td>
+      <td class="mono">14.9%</td>
+      <td class="mono">80.7%</td>
+      <td>
+        <div style="background:#21262d;border-radius:3px;height:6px;width:80px">
+          <div style="width:81%;height:6px;background:#f85149;border-radius:3px"></div>
+        </div>
+      </td>
+    </tr>
+  </table>
+  <div style="margin-top:12px;font-size:11px;color:#8b949e">
+    判定阈值: <span class="accepted">接受(μ≥0.7)</span> · <span class="tension">张力(0.3≤μ<0.7)</span> · <span class="rejected">拒绝(μ<0.3)</span><br>
+    误差 = |预测分数 − 实际分数|，累计精度 = 1 − 平均误差<br>
+    自由能最小化: 每次测量后按误差微调规则权重，缩小未来预测偏差
+  </div>
+</div>
+
+<h2>规则进化</h2>
+<div class="card">
+<table>
+    <tr><th>规则名</th><th>维度</th><th>权重</th><th>域</th></tr>
+    <tr>
+      <td class="mono">location:tavern</td>
+      <td class="mono aligned">2D</td>
+      <td class="mono">0.72</td>
+      <td class="mono">space</td>
+    </tr><tr>
+      <td class="mono">character:Alice</td>
+      <td class="mono aligned">2D</td>
+      <td class="mono">0.62</td>
+      <td class="mono">character</td>
+    </tr><tr>
+      <td class="mono">mood:calm</td>
+      <td class="mono aligned">2D</td>
+      <td class="mono">0.50</td>
+      <td class="mono">atmosphere</td>
+    </tr><tr>
+      <td class="mono">causality:entry</td>
+      <td class="mono rejected">16D</td>
+      <td class="mono">0.91</td>
+      <td class="mono">causality</td>
+    </tr><tr>
+      <td class="mono">paradox:self</td>
+      <td class="mono rejected">16D</td>
+      <td class="mono">1.00</td>
+      <td class="mono">causality</td>
+    </tr><tr>
+      <td class="mono">location:tavern∘character:Alice</td>
+      <td class="mono aligned">2D</td>
+      <td class="mono">0.67</td>
+      <td class="mono">atmosphere</td>
+    </tr><tr>
+      <td class="mono">character:Alice∘location:tavern</td>
+      <td class="mono aligned">2D</td>
+      <td class="mono">0.67</td>
+      <td class="mono">atmosphere</td>
+    </tr><tr>
+      <td class="mono">location:tavern∘mood:calm</td>
+      <td class="mono aligned">2D</td>
+      <td class="mono">0.61</td>
+      <td class="mono">atmosphere</td>
+    </tr><tr>
+      <td class="mono">mood:calm∘location:tavern</td>
+      <td class="mono aligned">2D</td>
+      <td class="mono">0.61</td>
+      <td class="mono">atmosphere</td>
+    </tr><tr>
+      <td class="mono">location:tavern∘causality:entry</td>
+      <td class="mono rejected">16D</td>
+      <td class="mono">0.82</td>
+      <td class="mono">causality</td>
+    </tr><tr>
+      <td class="mono">causality:entry∘location:tavern</td>
+      <td class="mono rejected">16D</td>
+      <td class="mono">0.82</td>
+      <td class="mono">causality</td>
+    </tr><tr>
+      <td class="mono">location:tavern∘paradox:self</td>
+      <td class="mono rejected">16D</td>
+      <td class="mono">0.86</td>
+      <td class="mono">causality</td>
+    </tr><tr>
+      <td class="mono">paradox:self∘location:tavern</td>
+      <td class="mono rejected">16D</td>
+      <td class="mono">0.86</td>
+      <td class="mono">causality</td>
+    </tr><tr>
+      <td class="mono">character:Alice∘mood:calm</td>
+      <td class="mono aligned">2D</td>
+      <td class="mono">0.56</td>
+      <td class="mono">atmosphere</td>
+    </tr><tr>
+      <td class="mono">mood:calm∘character:Alice</td>
+      <td class="mono aligned">2D</td>
+      <td class="mono">0.56</td>
+      <td class="mono">atmosphere</td>
+    </tr><tr>
+      <td class="mono">character:Alice∘causality:entry</td>
+      <td class="mono rejected">16D</td>
+      <td class="mono">0.77</td>
+      <td class="mono">causality</td>
+    </tr><tr>
+      <td class="mono">character:Alice∘paradox:self</td>
+      <td class="mono rejected">16D</td>
+      <td class="mono">0.81</td>
+      <td class="mono">causality</td>
+    </tr><tr>
+      <td class="mono">mood:calm∘causality:entry</td>
+      <td class="mono rejected">16D</td>
+      <td class="mono">0.71</td>
+      <td class="mono">causality</td>
+    </tr><tr>
+      <td class="mono">causality:entry∘mood:calm</td>
+      <td class="mono rejected">16D</td>
+      <td class="mono">0.71</td>
+      <td class="mono">causality</td>
+    </tr><tr>
+      <td class="mono">mood:calm∘paradox:self</td>
+      <td class="mono rejected">16D</td>
+      <td class="mono">0.75</td>
+      <td class="mono">causality</td>
+    </tr>
+    <tr><td colspan="4" style="color:#8b949e">... 还有 3 条</td></tr>
+  </table>
+</div>
+
+
+<h2>多智能体共识</h2>
+<div class="card">
+<div style="display:flex;gap:24px">
+    <div>
+      <div class="value accepted">1</div>
+      <div style="font-size:11px;color:#8b949e">已同意</div>
+    </div>
+    <div>
+      <div class="value tension">0</div>
+      <div style="font-size:11px;color:#8b949e">有争议</div>
+    </div>
+    <div>
+      <div class="value" style="color:#f0f6fc">20%</div>
+      <div style="font-size:11px;color:#8b949e">全局置信度</div>
+    </div>
+  </div>
+</div>
+
+<footer>LIM-WM v0.1 · 9 步 · 5 实体 · 10 连接</footer>
+</body>
+</html>
