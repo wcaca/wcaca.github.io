@@ -1,913 +1,335 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>内在风景 — 演示</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>wcaca · 12 部署总入口</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+  color: #e2e8f0;
+  padding: 32px 16px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+.wrap { max-width: 1200px; margin: 0 auto; }
 
-    body {
-      background: #0a0a0f;
-      color: #c8c4bc;
-      font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
+.hero {
+  text-align: center;
+  padding: 48px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  margin-bottom: 32px;
+}
+.hero h1 {
+  font-size: 48px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 50%, #f472b6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 12px;
+  letter-spacing: -1px;
+}
+.hero .sub {
+  color: #94a3b8;
+  font-size: 16px;
+  margin-bottom: 24px;
+}
+.hero .stats {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+.hero .stat {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  padding: 12px 20px;
+  min-width: 100px;
+}
+.hero .stat .num {
+  font-size: 24px;
+  font-weight: 700;
+  color: #4ade80;
+  font-variant-numeric: tabular-nums;
+}
+.hero .stat .lbl {
+  color: #94a3b8;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 4px;
+}
 
-    /* 布局 */
-    .layout {
-      display: grid;
-      grid-template-columns: 340px 1fr;
-      grid-template-rows: 1fr;
-      height: 100vh;
-      overflow: hidden;
-    }
-    @media (max-width: 768px) {
-      .layout { grid-template-columns: 1fr; grid-template-rows: auto 1fr; height: auto; }
-    }
+h2 {
+  color: #93c5fd;
+  margin: 32px 0 16px;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+h2 .icon { font-size: 22px; }
 
-    /* 左侧对话面板 */
-    .chat-panel {
-      display: flex;
-      flex-direction: column;
-      border-right: 0.5px solid #2a2830;
-      background: #0f0f15;
-    }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.card {
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid #334155;
+  border-left: 4px solid #4ade80;
+  border-radius: 12px;
+  padding: 20px;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(8px);
+}
+.card:hover {
+  transform: translateY(-2px);
+  border-color: #60a5fa;
+  background: rgba(30, 41, 59, 0.8);
+}
+.card.pages { border-left-color: #60a5fa; }
+.card.api { border-left-color: #fbbf24; }
 
-    .panel-header {
-      padding: 20px 24px 16px;
-      border-bottom: 0.5px solid #1e1c28;
-    }
-    .panel-header h1 {
-      font-size: 15px;
-      font-weight: 500;
-      color: #e8e4dc;
-      letter-spacing: 0.02em;
-    }
-    .panel-header p {
-      font-size: 12px;
-      color: #6a6678;
-      margin-top: 4px;
-      line-height: 1.5;
-    }
+.card h3 {
+  font-size: 16px;
+  color: #f1f5f9;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.card h3 .badge {
+  font-size: 10px;
+  padding: 2px 8px;
+  background: #1e293b;
+  color: #cbd5e1;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+.card .url {
+  color: #4ade80;
+  font-size: 13px;
+  font-family: 'JetBrains Mono', 'SF Mono', Monaco, monospace;
+  word-break: break-all;
+  margin-bottom: 8px;
+}
+.card.pages .url { color: #60a5fa; }
+.card.api .url { color: #fbbf24; }
+.card .desc {
+  color: #94a3b8;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.card .meta {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+.tag {
+  display: inline-block;
+  background: #1e293b;
+  color: #cbd5e1;
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+}
 
-    .messages {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px 20px 0;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      scrollbar-width: thin;
-      scrollbar-color: #2a2830 transparent;
-    }
-
-    .message {
-      max-width: 90%;
-      padding: 10px 14px;
-      border-radius: 12px;
-      font-size: 13px;
-      line-height: 1.6;
-    }
-    .message.user {
-      align-self: flex-end;
-      background: #1e1c30;
-      color: #c8c4bc;
-      border-bottom-right-radius: 4px;
-    }
-    .message.assistant {
-      align-self: flex-start;
-      background: #131218;
-      color: #9a97a8;
-      border: 0.5px solid #1e1c28;
-      border-bottom-left-radius: 4px;
-    }
-    .message.system {
-      align-self: center;
-      background: transparent;
-      color: #4a4858;
-      font-size: 11px;
-      text-align: center;
-      border: none;
-      padding: 4px 0;
-    }
-
-    .input-area {
-      padding: 16px 20px 20px;
-      border-top: 0.5px solid #1e1c28;
-    }
-    .input-row {
-      display: flex;
-      gap: 8px;
-      align-items: flex-end;
-    }
-    textarea {
-      flex: 1;
-      background: #13121a;
-      border: 0.5px solid #2a2830;
-      border-radius: 10px;
-      color: #c8c4bc;
-      font-size: 13px;
-      font-family: inherit;
-      padding: 10px 14px;
-      resize: none;
-      min-height: 42px;
-      max-height: 120px;
-      line-height: 1.5;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-    textarea:focus { border-color: #4a4468; }
-    textarea::placeholder { color: #3a384a; }
-
-    button.send-btn {
-      width: 38px;
-      height: 38px;
-      border-radius: 10px;
-      background: #1e1c30;
-      border: 0.5px solid #3a3858;
-      color: #8a87a8;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.15s;
-      flex-shrink: 0;
-    }
-    button.send-btn:hover { background: #2a2840; color: #c8c4dc; }
-    button.send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-    .mode-tabs {
-      display: flex;
-      gap: 6px;
-      padding: 12px 20px;
-      border-top: 0.5px solid #1e1c28;
-    }
-    .tab-btn {
-      flex: 1;
-      padding: 6px 0;
-      border-radius: 6px;
-      background: transparent;
-      border: 0.5px solid #2a2830;
-      color: #5a5868;
-      font-size: 11px;
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-    .tab-btn.active { background: #1e1c30; border-color: #4a4468; color: #a8a4c0; }
-
-    /* 右侧渲染区域 */
-    .render-panel {
-      position: relative;
-      background: #050508;
-      overflow: hidden;
-    }
-
-    #landscape-canvas {
-      width: 100%;
-      height: 100%;
-      display: block;
-    }
-
-    #map-container {
-      width: 100%;
-      height: 100%;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      background: #050508;
-    }
-    #map-container.active {
-      display: flex;
-    }
-    #map-container svg {
-      max-width: 90%;
-      max-height: 90%;
-    }
-
-    .render-overlay {
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #050508;
-      transition: opacity 0.8s;
-      pointer-events: none;
-    }
-    .render-overlay.hidden { opacity: 0; }
-
-    .placeholder-text {
-      text-align: center;
-    }
-    .placeholder-text .title {
-      font-size: 22px;
-      color: #2a2838;
-      font-weight: 300;
-      letter-spacing: 0.15em;
-      margin-bottom: 8px;
-    }
-    .placeholder-text .sub {
-      font-size: 12px;
-      color: #1e1c28;
-      letter-spacing: 0.05em;
-    }
-
-    .dsl-badge {
-      position: absolute;
-      bottom: 16px;
-      right: 16px;
-      background: #0f0f15cc;
-      border: 0.5px solid #2a2830;
-      border-radius: 8px;
-      padding: 8px 12px;
-      font-size: 10px;
-      color: #4a4868;
-      font-family: monospace;
-      max-width: 200px;
-      line-height: 1.6;
-      backdrop-filter: blur(10px);
-    }
-
-    .poetry-line {
-      position: absolute;
-      bottom: 16px;
-      left: 16px;
-      font-size: 12px;
-      color: #3a3848;
-      font-style: italic;
-      letter-spacing: 0.04em;
-    }
-
-    /* 加载动画 */
-    .loading-dots { display: inline-flex; gap: 4px; }
-    .loading-dots span {
-      width: 4px; height: 4px;
-      border-radius: 50%;
-      background: #4a4868;
-      animation: dot-pulse 1.2s ease-in-out infinite;
-    }
-    .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
-    .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
-    @keyframes dot-pulse {
-      0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
-      40% { opacity: 1; transform: scale(1); }
-    }
-  </style>
+footer {
+  text-align: center;
+  padding: 32px 16px;
+  margin-top: 48px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  color: #64748b;
+  font-size: 12px;
+}
+footer a { color: #60a5fa; text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+</style>
 </head>
 <body>
-<div class="layout">
-  <!-- 左：对话 -->
-  <div class="chat-panel">
-    <div class="panel-header">
-      <h1>内在风景</h1>
-      <p>说说你现在的状态<br>风景会出现</p>
-    </div>
+<div class="wrap">
 
-    <div class="messages" id="messages">
-      <div class="message assistant">你好。<br>现在，身体里有什么感觉？</div>
-    </div>
-
-    <div class="mode-tabs">
-      <button class="tab-btn active" onclick="setMode('converse')" id="tab-converse">对话生成</button>
-      <button class="tab-btn" onclick="setMode('direct')" id="tab-direct">直接输入</button>
-      <button class="tab-btn" onclick="setMode('dsl')" id="tab-dsl">DSL 编辑</button>
-    </div>
-
-    <div class="input-area">
-      <div id="input-converse" class="input-row">
-        <textarea id="chat-input" placeholder="说说现在的感受…" rows="1"
-          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage()}"
-          oninput="autoGrow(this)"></textarea>
-        <button class="send-btn" onclick="sendMessage()" id="send-btn">
-          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
-          </svg>
-        </button>
+  <div class="hero">
+    <h1>wcaca</h1>
+    <p class="sub">12 个项目 / 6 个 cloudflared 域名 / 6 个 GitHub Pages</p>
+    <div class="stats">
+      <div class="stat">
+        <div class="num">12</div>
+        <div class="lbl">已部署</div>
       </div>
-      <div id="input-direct" style="display:none;">
-        <textarea id="direct-input" placeholder="描述内在状态，AI直接生成风景…" rows="3"
-          style="width:100%;margin-bottom:8px;"></textarea>
-        <button onclick="generateDirect()" style="width:100%;padding:8px;background:#1e1c30;border:0.5px solid #3a3858;color:#8a87a8;border-radius:8px;cursor:pointer;font-size:12px;">
-          生成风景
-        </button>
+      <div class="stat">
+        <div class="num">40</div>
+        <div class="lbl">总仓库</div>
       </div>
-      <div id="input-dsl" style="display:none;">
-        <textarea id="dsl-input" rows="8" placeholder='{"terrain":"fog_valley","light":"diffuse_grey","atmosphere":"suspended","brushwork":"wash_bleed","palette":"dusk_spectrum"}'
-          style="width:100%;margin-bottom:8px;font-family:monospace;font-size:11px;color:#8a9080;"></textarea>
-        <button onclick="renderFromDSL()" style="width:100%;padding:8px;background:#1e1c30;border:0.5px solid #3a3858;color:#8a87a8;border-radius:8px;cursor:pointer;font-size:12px;">
-          渲染 DSL
-        </button>
+      <div class="stat">
+        <div class="num">30%</div>
+        <div class="lbl">部署率</div>
       </div>
     </div>
   </div>
 
-  <!-- 右：渲染 -->
-  <div class="render-panel">
-    <canvas id="landscape-canvas"></canvas>
-    <div id="map-container">
-      <div id="map-svg-content"></div>
-    </div>
-
-    <div class="render-overlay" id="render-overlay">
-      <div class="placeholder-text">
-        <div class="title">内在风景</div>
-        <div class="sub">等待你的描述</div>
+  <h2><span class="icon">🚀</span> Cloudflared 域名（生产环境）</h2>
+  <div class="grid">
+    <a class="card" href="https://dashboard.noteverse.space" target="_blank">
+      <h3>Mavis Dashboard <span class="badge">DASHBOARD</span></h3>
+      <div class="url">dashboard.noteverse.space</div>
+      <div class="desc">40 个 GitHub repo 进展面板、登录鉴权、事件推送。管理员入口。</div>
+      <div class="meta">
+        <span class="tag">Python</span>
+        <span class="tag">8443</span>
+        <span class="tag">systemd</span>
       </div>
-    </div>
+    </a>
 
-    <div class="poetry-line" id="poetry-line" style="display:none;"></div>
+    <a class="card" href="https://crm.noteverse.space" target="_blank">
+      <h3>Beauty CRM <span class="badge">PWA</span></h3>
+      <div class="url">crm.noteverse.space</div>
+      <div class="desc">美容院客户管理系统。客户/回访/服务/卡项/交易/AI 助手。移动端 PWA。</div>
+      <div class="meta">
+        <span class="tag">JavaScript</span>
+        <span class="tag">Express</span>
+        <span class="tag">8001</span>
+      </div>
+    </a>
 
-    <div class="dsl-badge" id="dsl-badge" style="display:none;"></div>
+    <a class="card" href="https://atm.noteverse.space" target="_blank">
+      <h3>动中觉察跳转器 <span class="badge">REDIRECTOR</span></h3>
+      <div class="url">atm.noteverse.space</div>
+      <div class="desc">费登奎斯《动中觉察》12 节课永久 URL 跳转器。书签一次，永远跟到最新版本。</div>
+      <div class="meta">
+        <span class="tag">Python</span>
+        <span class="tag">7780</span>
+      </div>
+    </a>
 
-    <!-- 视角切换 -->
-    <div style="position:absolute;top:16px;right:16px;display:flex;gap:6px;" id="view-controls" style="display:none">
-      <button onclick="switchView('first_person')" id="btn-1p"
-        style="padding:5px 10px;background:#0f0f15cc;border:0.5px solid #2a2830;border-radius:6px;color:#6a6878;font-size:11px;cursor:pointer;backdrop-filter:blur(8px);">
-        第一视角
-      </button>
-      <button onclick="switchView('map')" id="btn-map"
-        style="padding:5px 10px;background:#0f0f15cc;border:0.5px solid #2a2830;border-radius:6px;color:#6a6878;font-size:11px;cursor:pointer;backdrop-filter:blur(8px);">
-        地图视角
-      </button>
-    </div>
+    <a class="card" href="https://system-self.noteverse.space" target="_blank">
+      <h3>显影自性 <span class="badge">GROWTH</span></h3>
+      <div class="url">system-self.noteverse.space</div>
+      <div class="desc">把长期迷茫感，逐渐转化为清晰自我表达与行动方向的成长系统。8 个 tab：今日显影 / 成长地图 / 蛛网图谱 / 学习空间 / 自我宇宙 / 理想自我 / 我的 / 深度工作台。</div>
+      <div class="meta">
+        <span class="tag">Next.js 16</span>
+        <span class="tag">Drizzle</span>
+        <span class="tag">22 表</span>
+        <span class="tag">3030</span>
+      </div>
+    </a>
+
+    <a class="card" href="https://fc.noteverse.space" target="_blank">
+      <h3>未来学大会 <span class="badge">CONGRESS</span></h3>
+      <div class="url">fc.noteverse.space</div>
+      <div class="desc">探索意义、构建世界、用 AI 协作思考的未来学工作台。4 个入口：世界 / Hermes / 个人 / 设置。</div>
+      <div class="meta">
+        <span class="tag">Next.js 16</span>
+        <span class="tag">Drizzle</span>
+        <span class="tag">16 表</span>
+        <span class="tag">3000</span>
+      </div>
+    </a>
+
+    <a class="card api" href="https://hermes.noteverse.space/docs" target="_blank">
+      <h3>Hermes OMP Bridge <span class="badge">API</span></h3>
+      <div class="url">hermes.noteverse.space</div>
+      <div class="desc">多租户 OMP 桥 HTTP API。13 个端点：/api/ai /api/tool /api/sessions /sessions/{id}。FastAPI + Swagger UI。</div>
+      <div class="meta">
+        <span class="tag">Python</span>
+        <span class="tag">FastAPI</span>
+        <span class="tag">7860</span>
+        <span class="tag">13 paths</span>
+      </div>
+    </a>
   </div>
+
+  <h2><span class="icon">📄</span> GitHub Pages（公网静态站）</h2>
+  <div class="grid">
+    <a class="card pages" href="./atm/">
+      <h3>动中觉察 12 节课主站 <span class="badge">LANDING</span></h3>
+      <div class="url">wcaca.github.io/atm/</div>
+      <div class="desc">费登奎斯《动中觉察》12 节课完整主站。13MB 资源（assets + 12 节 audio + 6 个视频）。静态备份版。</div>
+      <div class="meta">
+        <span class="tag">HTML</span>
+        <span class="tag">13MB</span>
+        <span class="tag">12 节课</span>
+      </div>
+    </a>
+
+    <a class="card pages" href="./landscape-engine/">
+      <h3>Landscape Engine <span class="badge">3D</span></h3>
+      <div class="url">wcaca.github.io/landscape-engine/</div>
+      <div class="desc">将内在状态翻译成 3D 绘画笔触风景。913 行 Three.js 内在风景渲染器。Agent 提取情感 → DSL 场景指令 → 第一视角 3D 笔触。</div>
+      <div class="meta">
+        <span class="tag">JavaScript</span>
+        <span class="tag">Three.js</span>
+        <span class="tag">44KB</span>
+      </div>
+    </a>
+
+    <a class="card pages" href="./sas/">
+      <h3>Semantic Action Studio <span class="badge">BUILDER</span></h3>
+      <div class="url">wcaca.github.io/sas/</div>
+      <div class="desc">语义行为工作室。世界切换 / 框选 / SceneGraph / DiscourseStack / 行为卡 / 语义拖动。React 19 + Vite 7。</div>
+      <div class="meta">
+        <span class="tag">React</span>
+        <span class="tag">Vite</span>
+        <span class="tag">8.6MB</span>
+      </div>
+    </a>
+
+    <a class="card pages" href="./attentionos/">
+      <h3>Attention Workspace <span class="badge">3D-OS</span></h3>
+      <div class="url">wcaca.github.io/attentionos/</div>
+      <div class="desc">注意力操作系统。3D workspace + 30+ 面板（AI 对话 / 词元 3D / 熵配置 / 工作流 / 干预）。React 18 + Three.js。</div>
+      <div class="meta">
+        <span class="tag">React 18</span>
+        <span class="tag">Three.js</span>
+        <span class="tag">1.8MB</span>
+      </div>
+    </a>
+
+    <a class="card pages" href="./autoresearch/">
+      <h3>autoresearch 宣传页 <span class="badge">PROMO</span></h3>
+      <div class="url">wcaca.github.io/autoresearch/</div>
+      <div class="desc">全自动化软件开发工具 — 一觉醒来，Features 全自动高质量实现。基于 karpathy/autoresearch 思想。</div>
+      <div class="meta">
+        <span class="tag">HTML</span>
+        <span class="tag">25KB</span>
+        <span class="tag">演示动画</span>
+      </div>
+    </a>
+
+    <a class="card pages" href="./limwm.html">
+      <h3>LIM World Model Dashboard <span class="badge">LOGIC</span></h3>
+      <div class="url">wcaca.github.io/limwm.html</div>
+      <div class="desc">λ 演算世界模型仪表盘。8 步场景: 起点 → 酒馆 → Alice → 暴风雨 → 紧张 → 规则进化 → 推理 → 共识。14 不可判定推论。</div>
+      <div class="meta">
+        <span class="tag">λ 演算</span>
+        <span class="tag">17KB</span>
+        <span class="tag">β-η 归约</span>
+      </div>
+    </a>
+  </div>
+
+  <footer>
+    <p>所有 URL 实时同步 · <a href="https://dashboard.noteverse.space">Mavis Dashboard</a> · 
+    <a href="https://github.com/wcaca">GitHub</a> · 
+    <a href="https://wcaca.github.io/wcaca.github.io/README.md">README</a></p>
+    <p style="margin-top: 8px;">总部署时间：2026-06-19 · v25cm · 5 min 缓存自动刷新</p>
+  </footer>
+
 </div>
-
-<!-- Three.js (从CDN加载) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-
-<script>
-// ===== 内联版本的核心逻辑 =====
-// 这是 demo 专用的自包含版本，不依赖 ES module import
-
-const TERRAIN_PARAMS = {
-  open_plain:    { meshType:'plane',   noiseScale:0.02, noiseAmplitude:0.3,  subdivisions:80,  horizonRatio:0.35 },
-  cracked_earth: { meshType:'plane',   noiseScale:0.08, noiseAmplitude:0.15, subdivisions:120, horizonRatio:0.25, crackPattern:true },
-  dense_forest:  { meshType:'forest',  noiseScale:0.04, noiseAmplitude:1.5,  subdivisions:60,  treeCount:60 },
-  mountain_path: { meshType:'height',  noiseScale:0.015,noiseAmplitude:3.0,  subdivisions:100, pathPresent:true },
-  still_water:   { meshType:'water',   noiseScale:0.005,noiseAmplitude:0.05, subdivisions:80,  waterOpacity:0.85 },
-  fog_valley:    { meshType:'height',  noiseScale:0.02, noiseAmplitude:1.2,  subdivisions:80,  fogDensity:0.06 },
-  threshold:     { meshType:'corridor',noiseScale:0.03, noiseAmplitude:0.4,  subdivisions:60,  doorPresent:true },
-  ruin_field:    { meshType:'plain',   noiseScale:0.05, noiseAmplitude:0.8,  subdivisions:100, debrisCount:30 },
-  shoreline:     { meshType:'shore',   noiseScale:0.03, noiseAmplitude:0.3,  subdivisions:90 },
-  inner_cave:    { meshType:'cave',    noiseScale:0.06, noiseAmplitude:1.0,  subdivisions:70,  enclosure:1.0 },
-};
-
-const LIGHT_PARAMS = {
-  oblique_amber: { type:'dir', angle:15,  color:0xFFB347, intensity:1.2, ambColor:0x553322, ambInt:0.3 },
-  diffuse_grey:  { type:'hemi',           skyColor:0xAAAAAA,groundColor:0x666666,intensity:0.9,ambColor:0x888888,ambInt:0.5 },
-  single_shaft:  { type:'spot',           color:0xEEEECC, intensity:2.0, ambColor:0x111111, ambInt:0.1 },
-  cold_zenith:   { type:'dir', angle:88,  color:0xBBCCDD, intensity:1.4, ambColor:0x223344, ambInt:0.3 },
-  inner_glow:    { type:'point',          color:0xDDBB88, intensity:1.0, ambColor:0x221100, ambInt:0.2 },
-  fractured_light:{type:'dir', angle:30,  color:0xFFEECC, intensity:1.5, ambColor:0x221100, ambInt:0.2 },
-  no_light:      { type:'ambient',        color:0x000000, intensity:0,   ambColor:0x0A0A0F, ambInt:0.15 },
-  dual_source:   { type:'dual',           color:0xFFAA44, color2:0x4466BB,intensity:0.8, intensity2:0.6, ambColor:0x333333,ambInt:0.2 },
-};
-
-const PALETTE_PARAMS = {
-  muted_earth:    { primary:0x8B7355, secondary:0x6B5A3E, sky:0xB8A898 },
-  cold_blue_grey: { primary:0x7A8A96, secondary:0x5A6A76, sky:0xB8C8D4 },
-  burnt_ochre:    { primary:0x8B4513, secondary:0x6B3010, sky:0x8A6040 },
-  pale_void:      { primary:0xD8D0C8, secondary:0xC0B8B0, sky:0xF0EBE4 },
-  vivid_contrast: { primary:0xE86020, secondary:0x204080, sky:0x206090 },
-  monochrome:     { primary:0x606060, secondary:0x404040, sky:0xB0B0B0 },
-  dusk_spectrum:  { primary:0x906050, secondary:0x604070, sky:0x604858 },
-  raw_shadow:     { primary:0x404848, secondary:0x202830, sky:0x303840 },
-};
-
-// ===== 渲染器（轻量内联版）=====
-let renderer3d = null;
-let scene3d = null, camera3d = null, renderer_gl = null, animId = null;
-let currentDSL = null;
-let viewMode = 'first_person';
-
-function initRenderer() {
-  const canvas = document.getElementById('landscape-canvas');
-  const w = canvas.clientWidth || 800;
-  const h = canvas.clientHeight || 600;
-
-  renderer_gl = new THREE.WebGLRenderer({ canvas, antialias: true });
-  renderer_gl.setPixelRatio(Math.min(devicePixelRatio, 2));
-  renderer_gl.setSize(w, h);
-  renderer_gl.shadowMap.enabled = true;
-  renderer_gl.toneMapping = THREE.ACESFilmicToneMapping;
-
-  scene3d = new THREE.Scene();
-  camera3d = new THREE.PerspectiveCamera(70, w / h, 0.1, 200);
-
-  window.addEventListener('resize', () => {
-    const w2 = canvas.clientWidth;
-    const h2 = canvas.clientHeight;
-    camera3d.aspect = w2 / h2;
-    camera3d.updateProjectionMatrix();
-    renderer_gl.setSize(w2, h2);
-  });
-}
-
-function fbm(x, y, oct = 4) {
-  let v = 0, a = 0.5, f = 1;
-  for (let i = 0; i < oct; i++) {
-    v += a * smoothNoise(x * f, y * f);
-    a *= 0.5; f *= 2;
-  }
-  return v;
-}
-function smoothNoise(x, y) {
-  const ix = Math.floor(x), iy = Math.floor(y);
-  const fx = x - ix, fy = y - iy;
-  const ux = fx * fx * (3 - 2 * fx), uy = fy * fy * (3 - 2 * fy);
-  const a = h(ix, iy), b = h(ix+1, iy), c = h(ix, iy+1), d = h(ix+1, iy+1);
-  return a + (b-a)*ux + (c-a)*uy + (a-b-c+d)*ux*uy;
-}
-function h(x, y) {
-  let n = x + y * 57;
-  n = (n<<13)^n;
-  return (1.0 - ((n*(n*n*15731+789221)+1376312589)&0x7fffffff)/1073741824.0)*0.5+0.5;
-}
-
-function buildScene(dsl) {
-  while (scene3d.children.length) {
-    const o = scene3d.children[0];
-    o.geometry?.dispose(); o.material?.dispose();
-    scene3d.remove(o);
-  }
-  if (animId) { cancelAnimationFrame(animId); animId = null; }
-
-  const tp = TERRAIN_PARAMS[dsl.terrain] || TERRAIN_PARAMS.open_plain;
-  const lp = LIGHT_PARAMS[dsl.light] || LIGHT_PARAMS.oblique_amber;
-  const pp = PALETTE_PARAMS[dsl.palette] || PALETTE_PARAMS.muted_earth;
-
-  scene3d.background = new THREE.Color(pp.sky);
-  if (tp.fogDensity) scene3d.fog = new THREE.FogExp2(new THREE.Color(pp.sky), tp.fogDensity);
-  else scene3d.fog = null;
-
-  const mat = new THREE.MeshLambertMaterial({ color: pp.primary });
-
-  // 地形
-  if (tp.meshType === 'forest') {
-    buildPlane(tp, mat);
-    buildForest(tp, pp);
-  } else if (tp.meshType === 'cave') {
-    buildCave(tp, pp);
-  } else if (tp.meshType === 'corridor') {
-    buildCorridor(tp, pp);
-  } else if (tp.meshType === 'water') {
-    buildPlane(tp, mat);
-    buildWater(tp, pp);
-  } else {
-    buildPlane(tp, mat);
-  }
-
-  // 光照
-  const amb = new THREE.AmbientLight(lp.ambColor, lp.ambInt);
-  scene3d.add(amb);
-
-  if (lp.type === 'dir') {
-    const rad = (lp.angle * Math.PI) / 180;
-    const dl = new THREE.DirectionalLight(lp.color, lp.intensity);
-    dl.position.set(Math.cos(rad)*20, Math.sin(rad)*20, -10);
-    dl.castShadow = true;
-    scene3d.add(dl);
-  } else if (lp.type === 'hemi') {
-    scene3d.add(new THREE.HemisphereLight(lp.skyColor, lp.groundColor, lp.intensity));
-  } else if (lp.type === 'spot') {
-    const spot = new THREE.SpotLight(lp.color, lp.intensity, 50, 0.3);
-    spot.position.set(0, 20, 0);
-    scene3d.add(spot);
-  } else if (lp.type === 'point') {
-    const pt = new THREE.PointLight(lp.color, lp.intensity, 30);
-    pt.position.set(0, 0.5, -5);
-    scene3d.add(pt);
-  } else if (lp.type === 'dual') {
-    const d1 = new THREE.DirectionalLight(lp.color, lp.intensity);
-    d1.position.set(20, 10, -5);
-    scene3d.add(d1);
-    const d2 = new THREE.DirectionalLight(lp.color2, lp.intensity2);
-    d2.position.set(-20, 10, -5);
-    scene3d.add(d2);
-  }
-
-  // 相机
-  if (viewMode === 'first_person') {
-    camera3d.position.set(0, 1.7, 0);
-    camera3d.lookAt(0, 1.4, -12);
-  } else {
-    camera3d.position.set(0, 30, 0);
-    camera3d.lookAt(0, 0, 0);
-  }
-  camera3d.fov = 70;
-  camera3d.updateProjectionMatrix();
-
-  // 动画
-  const tension = dsl.tension || 0.5;
-  const clock = new THREE.Clock();
-  function animate() {
-    animId = requestAnimationFrame(animate);
-    const t = clock.getElapsedTime();
-    if (viewMode === 'first_person') {
-      camera3d.position.y = 1.7 + Math.sin(t * 0.4) * 0.012;
-    }
-    renderer_gl.render(scene3d, camera3d);
-  }
-  animate();
-}
-
-function buildPlane(tp, mat) {
-  const geo = new THREE.PlaneGeometry(80, 80, tp.subdivisions, tp.subdivisions);
-  const pos = geo.attributes.position;
-  for (let i = 0; i < pos.count; i++) {
-    const x = pos.getX(i), y = pos.getY(i);
-    pos.setZ(i, fbm(x * tp.noiseScale, y * tp.noiseScale, 4) * tp.noiseAmplitude);
-  }
-  pos.needsUpdate = true;
-  geo.computeVertexNormals();
-  const mesh = new THREE.Mesh(geo, mat);
-  mesh.rotation.x = -Math.PI / 2;
-  mesh.receiveShadow = true;
-  scene3d.add(mesh);
-}
-
-function buildForest(tp, pp) {
-  const trunkMat = new THREE.MeshLambertMaterial({ color: pp.secondary });
-  const crownMat = new THREE.MeshLambertMaterial({ color: pp.primary });
-  for (let i = 0; i < (tp.treeCount || 40); i++) {
-    const x = (Math.random()-0.5)*60, z = (Math.random()-0.5)*60;
-    const h = 2+Math.random()*4, r = 0.3+Math.random()*0.5;
-    const trunk = new THREE.Mesh(new THREE.CylinderGeometry(r*.3,r*.5,h,5), trunkMat);
-    trunk.position.set(x,h/2,z);
-    scene3d.add(trunk);
-    const crown = new THREE.Mesh(new THREE.SphereGeometry(r*2,6,4), crownMat);
-    crown.position.set(x,h+r,z);
-    scene3d.add(crown);
-  }
-}
-
-function buildCave(tp, pp) {
-  const geo = new THREE.SphereGeometry(20, 24, 24);
-  const mat = new THREE.MeshLambertMaterial({ color: pp.secondary, side: THREE.BackSide });
-  scene3d.add(new THREE.Mesh(geo, mat));
-}
-
-function buildCorridor(tp, pp) {
-  const mat = new THREE.MeshLambertMaterial({ color: pp.primary });
-  const floor = new THREE.Mesh(new THREE.PlaneGeometry(6, 40, 8, 20), mat);
-  floor.rotation.x = -Math.PI/2;
-  scene3d.add(floor);
-  const wallMat = mat.clone();
-  const wL = new THREE.Mesh(new THREE.PlaneGeometry(40,4,10,4), wallMat);
-  wL.position.set(-3,2,-15); wL.rotation.y = Math.PI/2;
-  scene3d.add(wL);
-  const wR = wL.clone();
-  wR.position.set(3,2,-15); wR.rotation.y = -Math.PI/2;
-  scene3d.add(wR);
-  if (tp.doorPresent) {
-    const glow = new THREE.PointLight(0xFFEECC, 2, 25);
-    glow.position.set(0, 2, -30);
-    scene3d.add(glow);
-  }
-}
-
-function buildWater(tp, pp) {
-  const mat = new THREE.MeshPhongMaterial({ color: pp.secondary, transparent: true, opacity: 0.7, shininess:80 });
-  const water = new THREE.Mesh(new THREE.PlaneGeometry(80,80,30,20), mat);
-  water.rotation.x = -Math.PI/2;
-  water.position.y = 0.02;
-  scene3d.add(water);
-}
-
-// ===== 地图SVG渲染 =====
-function generateMapSVG(dsl, w, h) {
-  const pp_hex = {
-    muted_earth:    { p:'#8B7355', s:'#6B5A3E', a:'#A8876A', sh:'#3D2B1F', sk:'#B8A898' },
-    cold_blue_grey: { p:'#7A8A96', s:'#5A6A76', a:'#9AABB8', sh:'#2A3540', sk:'#B8C8D4' },
-    burnt_ochre:    { p:'#8B4513', s:'#6B3010', a:'#C06030', sh:'#2A1008', sk:'#8A6040' },
-    pale_void:      { p:'#D8D0C8', s:'#C0B8B0', a:'#E8E0D8', sh:'#888078', sk:'#F0EBE4' },
-    vivid_contrast: { p:'#E86020', s:'#204080', a:'#F0A000', sh:'#101010', sk:'#206090' },
-    monochrome:     { p:'#606060', s:'#404040', a:'#808080', sh:'#101010', sk:'#B0B0B0' },
-    dusk_spectrum:  { p:'#906050', s:'#604070', a:'#C07840', sh:'#201020', sk:'#604858' },
-    raw_shadow:     { p:'#404848', s:'#202830', a:'#708080', sh:'#080C10', sk:'#303840' },
-  };
-  const c = pp_hex[dsl.palette] || pp_hex.muted_earth;
-  const cx = w/2, cy = h/2;
-
-  let s = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">`;
-  s += `<rect width="${w}" height="${h}" fill="${c.sh}" opacity="0.95"/>`;
-
-  // 地形形状
-  const t = dsl.terrain;
-  if (t === 'open_plain') {
-    s += `<ellipse cx="${cx}" cy="${cy+30}" rx="${w*.38}" ry="${h*.28}" fill="${c.p}" opacity="0.55"/>`;
-    s += `<ellipse cx="${cx}" cy="${cy+30}" rx="${w*.22}" ry="${h*.16}" fill="${c.a}" opacity="0.35"/>`;
-  } else if (t === 'cracked_earth') {
-    s += `<rect x="${w*.1}" y="${h*.15}" width="${w*.8}" height="${h*.7}" rx="16" fill="${c.p}" opacity="0.6"/>`;
-    for(let i=0;i<10;i++){
-      const x1=w*.1+Math.random()*w*.8, y1=h*.15+Math.random()*h*.7;
-      const a=Math.random()*Math.PI*2, l=30+Math.random()*70;
-      s += `<line x1="${x1}" y1="${y1}" x2="${x1+Math.cos(a)*l}" y2="${y1+Math.sin(a)*l}" stroke="${c.sh}" stroke-width="${.5+Math.random()}" opacity="0.7"/>`;
-    }
-  } else if (t === 'dense_forest') {
-    s += `<rect fill="${c.s}" opacity="0.45" width="${w}" height="${h}"/>`;
-    for(let i=0;i<50;i++){
-      const x=Math.random()*w, y=Math.random()*h, r=8+Math.random()*18;
-      s += `<circle cx="${x}" cy="${y}" r="${r}" fill="${c.p}" opacity="${.4+Math.random()*.5}"/>`;
-    }
-    s += `<circle cx="${cx}" cy="${cy+20}" r="22" fill="${c.sk}" opacity="0.45"/>`;
-  } else if (t === 'still_water') {
-    s += `<ellipse cx="${cx}" cy="${cy}" rx="${w*.43}" ry="${h*.36}" fill="${c.s}" opacity="0.75"/>`;
-    for(let r=1;r<=4;r++) s += `<ellipse cx="${cx}" cy="${cy}" rx="${r*w*.06}" ry="${r*h*.05}" fill="none" stroke="${c.sk}" stroke-width=".5" opacity="${.55-r*.1}"/>`;
-    s += `<circle cx="${cx}" cy="${cy}" r="5" fill="${c.sk}" opacity="0.85"/>`;
-  } else if (t === 'threshold') {
-    s += `<rect x="0" y="0" width="${cx}" height="${h}" fill="${c.s}" opacity="0.5"/>`;
-    s += `<rect x="${cx}" y="0" width="${cx}" height="${h}" fill="${c.p}" opacity="0.4"/>`;
-    s += `<line x1="${cx}" y1="0" x2="${cx}" y2="${h}" stroke="${c.a}" stroke-width="2" opacity="0.6"/>`;
-    s += `<rect x="${cx-14}" y="${cy-24}" width="28" height="48" rx="14" fill="${c.sk}" opacity="0.5"/>`;
-  } else if (t === 'inner_cave') {
-    s += `<circle cx="${cx}" cy="${cy}" r="${Math.min(w,h)*.44}" fill="${c.sh}" opacity="0.85"/>`;
-    s += `<circle cx="${cx}" cy="${cy}" r="${Math.min(w,h)*.3}" fill="${c.s}" opacity="0.65"/>`;
-    s += `<circle cx="${cx}" cy="${cy}" r="${Math.min(w,h)*.18}" fill="${c.p}" opacity="0.7"/>`;
-    s += `<circle cx="${cx}" cy="${cy-Math.min(w,h)*.14}" r="7" fill="${c.sk}" opacity="0.85"/>`;
-  } else if (t === 'fog_valley') {
-    s += `<ellipse cx="${cx}" cy="${cy}" rx="${w*.36}" ry="${h*.28}" fill="${c.p}" opacity="0.45"/>`;
-    for(let i=0;i<6;i++) {
-      s += `<ellipse cx="${cx+(Math.random()-.5)*50}" cy="${cy+(Math.random()-.5)*40}" rx="${40+Math.random()*90}" ry="${20+Math.random()*50}" fill="${c.sk}" opacity="${.06+Math.random()*.1}"/>`;
-    }
-  } else if (t === 'mountain_path') {
-    for(let r=5;r>0;r--) s += `<ellipse cx="${cx+(Math.random()-.5)*15}" cy="${cy+(Math.random()-.5)*15}" rx="${w*.1*r}" ry="${h*.08*r}" fill="none" stroke="${c.p}" stroke-width="${.4+r*.08}" opacity="${.25+r*.07}"/>`;
-    s += `<ellipse cx="${cx}" cy="${cy}" rx="12" ry="10" fill="${c.a}" opacity="0.75"/>`;
-    s += `<line x1="${cx}" y1="${cy+h*.25}" x2="${cx+5}" y2="${cy}" stroke="${c.a}" stroke-width="2" stroke-dasharray="6,4" opacity="0.5"/>`;
-  } else if (t === 'shoreline') {
-    s += `<rect x="0" y="0" width="${w}" height="${cy}" fill="${c.p}" opacity="0.55"/>`;
-    s += `<rect x="0" y="${cy}" width="${w}" height="${cy}" fill="${c.s}" opacity="0.65"/>`;
-    let path = `M 0 ${cy}`;
-    for(let i=1;i<=10;i++) path += ` L ${w/10*i} ${cy+Math.sin(i*.8)*14+(Math.random()-.5)*8}`;
-    s += `<path d="${path}" fill="none" stroke="${c.sk}" stroke-width="2" opacity="0.7"/>`;
-  } else {
-    s += `<rect x="${w*.1}" y="${h*.1}" width="${w*.8}" height="${h*.8}" rx="12" fill="${c.p}" opacity="0.5"/>`;
-  }
-
-  // 焦点标记
-  s += `<circle cx="${cx}" cy="${cy}" r="16" fill="none" stroke="${c.sk}" stroke-width="1.2" opacity="0.7"/>`;
-  s += `<circle cx="${cx}" cy="${cy}" r="3.5" fill="${c.sk}" opacity="0.85"/>`;
-
-  // 张力线
-  if ((dsl.tension||.5) > 0.6) {
-    for(let i=0;i<5;i++) {
-      s += `<line x1="${Math.random()*w}" y1="${Math.random()*h}" x2="${Math.random()*w}" y2="${Math.random()*h}" stroke="${c.a}" stroke-width=".4" opacity="${.2+Math.random()*.25}"/>`;
-    }
-  }
-
-  s += '</svg>';
-  return s;
-}
-
-// ===== 对话逻辑 =====
-let conversationHistory = [];
-let turnsInExplore = 0;
-let MAX_EXPLORE = 3;
-let isLoading = false;
-let currentMode = 'converse';
-
-const EXPLORE_QUESTIONS = [
-  '你好。现在，身体里有什么感觉？',
-  '如果给这个感觉一个颜色或温度，会是什么？',
-  '现在有什么是清楚的，有什么还是模糊的？',
-  '你现在站在哪里——或者，你想站在哪里？',
-];
-
-function addMessage(text, role) {
-  const msgs = document.getElementById('messages');
-  const div = document.createElement('div');
-  div.className = `message ${role}`;
-  div.innerHTML = text.replace(/\n/g, '<br>');
-  msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight;
-}
-
-function setLoading(v) {
-  isLoading = v;
-  document.getElementById('send-btn').disabled = v;
-  if (v) {
-    const msgs = document.getElementById('messages');
-    const d = document.createElement('div');
-    d.className = 'message assistant';
-    d.id = 'loading-msg';
-    d.innerHTML = '<div class="loading-dots"><span></span><span></span><span></span></div>';
-    msgs.appendChild(d);
-    msgs.scrollTop = msgs.scrollHeight;
-  } else {
-    const d = document.getElementById('loading-msg');
-    if (d) d.remove();
-  }
-}
-
-async function sendMessage() {
-  if (isLoading) return;
-  const input = document.getElementById('chat-input');
-  const text = input.value.trim();
-  if (!text) return;
-  input.value = '';
-  input.style.height = 'auto';
-
-  addMessage(text, 'user');
-  conversationHistory.push({ role: 'user', content: text });
-  turnsInExplore++;
-
-  if (turnsInExplore < MAX_EXPLORE) {
-    const q = EXPLORE_QUESTIONS[Math.min(turnsInExplore, EXPLORE_QUESTIONS.length-1)];
-    setTimeout(() => {
-      addMessage(q, 'assistant');
-      conversationHistory.push({ role: 'assistant', content: q });
-    }, 600);
-  } else {
-    setLoading(true);
-    try {
-      const fullContext = conversationHistory.map(m => `${m.role}: ${m.content}`).join('\n');
-      await generateLandscapeFromContext(fullContext);
-    } catch(e) {
-      addMessage('生成时遇到问题：' + e.message, 'assistant');
-    } finally {
-      setLoading(false);
-    }
-  }
-}
-
-async function generateLandscapeFromContext(context) {
-  const systemPrompt = `你是一位将内心状态翻译成风景的画家。你只输出JSON，不说任何其他话。
-
-根据以下对话，输出一个描述内在风景的JSON。只使用这些值：
-
-terrain: open_plain/cracked_earth/dense_forest/mountain_path/still_water/fog_valley/threshold/ruin_field/shoreline/inner_cave
-light: oblique_amber/diffuse_grey/single_shaft/cold_zenith/inner_glow/fractured_light/no_light/dual_source
-atmosphere: clear/humid/dry/electric/suspended/dissolving/heavy/weightless
-brushwork: hesitant_layered/heavy_impasto/vanishing_trail/sharp_fracture/wash_bleed/gestural_sweep/stipple_scatter/fine_line_web/smooth_plane
-palette: muted_earth/cold_blue_grey/burnt_ochre/pale_void/vivid_contrast/monochrome/dusk_spectrum/raw_shadow
-motion: still/slow_drift/distant_wind/trembling/flowing_through/circling
-beauty_mode: as_is/find_light/full_dark
-tension: 0到1的数字
-depth: 0到1的数字
-scale: intimate/human/vast
-
-只输出JSON，不加解释。`;
-
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 1000,
-      system: systemPrompt,
-      messages: [{ role: 'user', content: `基于这段对话生成风景JSON：\n${context}` }],
-    }),
-  });
-
-  const data = await response.json();
-
-  if (data.error) {
-    // API key 未配置时使用 demo DSL
-    console.warn('API 不可用，使用演示场景');
-    const demoDSL = getDemoScene();
-    renderScene(demoDSL);
-    addMessage('（演示模式：风景已生成）', 'system');
-    return;
-  }
-
-  const raw = data.content?.map(b => b.text||'').join('') || '';
-  try {
-    const cleaned = raw.replace(/```json|```/g,'').trim();
-    const dsl = JSON.parse(cleaned);
-    renderScene(dsl);
-    const poetry = makePoetry(dsl);
-    addMessage(poetry, 'system');
-  } catch(e) {
-    addMessage('风景翻译出了点问题，请重试。', 'assistant');
-  }
-}
-
-async function generateDirect() {
-  const text = document.getElementById('direct-input').value.trim();
-  if (!text) return;
-  setLoading(true);
-  try {
-    await generateLandscapeFromContext(text);
-  } finally {
-    setLoading(false);
-  }
-}
-
-function renderFromDSL() {
-  try {
-    const raw = document.getElementById('dsl-input').value.trim();
-    const dsl = JSON.parse(raw);
-    renderScene(dsl);
-  } catch(e) {
-    alert('JSON 格式有误: ' + e.message);
-  }
-}
-
-function renderScene(dsl) {
-  currentDSL = dsl;
-
-  // 隐藏占位
-  const overlay = document.getElementById('render-overlay');
-  overlay.classList.add('hidden');
-  setTimeout(() => overlay.style.display = 'none', 800);
-
-  document.getElementById('view-controls').style.display = 'flex';
-
-  if (viewMode === 'first_person') {
-    document.getElementById('landscape-canvas').style.display = 'block';
-    document.getElementById('map-container').classList.remove('active');
-    if (!renderer_gl) initRenderer();
-    buildScene(dsl);
-  } else {
-    showMap(dsl);
-  }
-
-  // 显示DSL摘要
-  const badge = document.getElementById('dsl-badge');
-  badge.style.display = 'block';
-  badge.textContent = [dsl.terrain, dsl.light, dsl.palette, dsl.brushwork].join('\n');
-
-  // 诗意文字
-  const poetry = document.getElementById('poetry-line');
-  poetry.textContent = makePoetry(dsl);
-  poetry.style.display = 'block';
-}
-
-function showMap(dsl) {
-  const container = document.getElementById('map-container');
-  const canvas = document.getElementById('landscape-canvas');
-  canvas.style.display = 'none';
-  container.classList.add('active');
-  const content = document.getElementById('map-svg-content');
-  const w = container.clientWidth * 0.85;
-  const h = container.clientHeight * 0.85;
-  content.innerHTML = generateMapSVG(dsl, w, h);
-}
-
-function switchView(mode) {
-  viewMode = mode;
-  document.getElementById('btn-1p').style.color = mode === 'first_person' ? '#c8c4dc' : '#6a6878';
-  document.getElementById('btn-map').style.color = mode === 'map' ? '#c8c4dc' : '#6a6878';
-  if (!currentDSL) return;
-  if (mode === 'first_person') {
-    document.getElementById('landscape-canvas').style.display = 'block';
-    document.getElementById('map-container').classList.remove('active');
-    if (!renderer_gl) initRenderer();
-    buildScene(currentDSL);
-  } else {
-    showMap(currentDSL);
-  }
-}
-
-function setMode(mode) {
-  currentMode = mode;
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById(`tab-${mode}`).classList.add('active');
-  ['converse','direct','dsl'].forEach(m => {
-    document.getElementById(`input-${m}`).style.display = m === mode ? 'block' : 'none';
-  });
-  if (mode === 'converse') {
-    document.getElementById('input-converse').style.display = 'flex';
-  }
-}
-
-function autoGrow(el) {
-  el.style.height = 'auto';
-  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
-}
-
-function makePoetry(dsl) {
-  const t = { open_plain:'这里很开阔', cracked_earth:'地面有裂纹', dense_forest:'周围很密', mountain_path:'有一条路', still_water:'水面是静的', fog_valley:'有些地方还看不清', threshold:'站在某个边界上', ruin_field:'有些东西不是原来的样子了', shoreline:'两种力量相遇的地方', inner_cave:'在里面，很深' };
-  const l = { oblique_amber:'光从侧边来', diffuse_grey:'光是均匀的', single_shaft:'只有一束光是清楚的', cold_zenith:'光从正上方压下来', inner_glow:'光从里面透出', fractured_light:'光是破碎的', no_light:'现在是暗的', dual_source:'光从两个方向来' };
-  return [(t[dsl.terrain]||''), (l[dsl.light]||'')].filter(Boolean).join('。') + (dsl.focal_element ? `。有${dsl.focal_element}` : '') + '。';
-}
-
-function getDemoScene() {
-  const scenes = [
-    { terrain:'fog_valley', light:'diffuse_grey', atmosphere:'suspended', brushwork:'wash_bleed', palette:'dusk_spectrum', tension:0.4, depth:0.6, scale:'human', beauty_mode:'as_is' },
-    { terrain:'cracked_earth', light:'single_shaft', atmosphere:'dry', brushwork:'heavy_impasto', palette:'burnt_ochre', tension:0.7, depth:0.4, scale:'human', beauty_mode:'as_is' },
-    { terrain:'still_water', light:'oblique_amber', atmosphere:'humid', brushwork:'smooth_plane', palette:'cold_blue_grey', tension:0.2, depth:0.8, scale:'vast', beauty_mode:'find_light' },
-    { terrain:'threshold', light:'inner_glow', atmosphere:'electric', brushwork:'hesitant_layered', palette:'muted_earth', tension:0.65, depth:0.5, scale:'intimate', beauty_mode:'as_is' },
-    { terrain:'inner_cave', light:'no_light', atmosphere:'heavy', brushwork:'heavy_impasto', palette:'monochrome', tension:0.5, depth:0.7, scale:'intimate', beauty_mode:'full_dark' },
-  ];
-  return scenes[Math.floor(Math.random() * scenes.length)];
-}
-
-// 初始化
-document.addEventListener('DOMContentLoaded', () => {
-  initRenderer();
-  setMode('converse');
-
-  // 键盘快捷键
-  document.addEventListener('keydown', e => {
-    if (e.key === '1') switchView('first_person');
-    if (e.key === '2') switchView('map');
-  });
-});
-</script>
 </body>
 </html>
